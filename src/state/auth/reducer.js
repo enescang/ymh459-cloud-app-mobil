@@ -1,10 +1,9 @@
 
 const initialState = {
-	account: null,
-	profile: null,
+	user: null,
 	access_token: null,
-	profile_token: null,
 	login_complate: false,
+
 	selectedLanguage: null,
 	translater: () => { },
 };
@@ -19,8 +18,8 @@ const reducer = (state = initialState, { type, payload }) => {
 			return { ...state, profile: { ...payload } };
 		case "COMPLETE_LOGIN":
 			return { ...state, login_complate: true };
-		case "ACCOUNT":
-			return { ...state, account: payload.account, access_token: payload.access_token };
+		case "USER_VERIFIED":
+			return { ...state, user: payload.user, access_token: payload.access_token };
 		case "LANGUAGE":
 			return { ...state, translater: payload.translater, selectedLanguage: payload.language };
 		case "LOGOUT":
