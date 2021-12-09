@@ -1,16 +1,22 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import { P, Space, SFImage } from '../../../components'
+import { P, Space, SFImage, Clickable } from '../../../components'
+import { actions } from '../../../state';
 
 class ScreenTwo extends Component {
+
+
+    logout = async()=>{
+        actions.auth.Logout();
+    }
 
     render() {
         return (
             <View style={styles.container}>
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <SFImage
-                        source={{uri: 'https://picsum.photos/200'}}
+                        source={{ uri: 'https://picsum.photos/200' }}
                         width={100}
                         round
                     />
@@ -37,6 +43,16 @@ class ScreenTwo extends Component {
                         <P color={'#242424'} size={'xl'} bold>A</P>
                         <Space h={'xs'} />
                         <P color={'#242424'} size={'d'} bold>17 GB Kullanılabilir</P>
+                    </View>
+
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent:'center' }}>
+                        <Clickable onClick={this.logout} animSize={0.95}>
+                            <View style={{ paddingVertical: 10, alignItems: 'center', backgroundColor:"#98c1d9", width:200 }}>
+                                <P size={"d"} color={'#ffffff'} type={'sb'}>
+                                    Çıkış
+                                </P>
+                            </View>
+                        </Clickable>
                     </View>
                 </View>
             </View>

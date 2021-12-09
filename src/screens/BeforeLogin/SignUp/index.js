@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TextInput } from 'react-native';
+import { View, Text, Modal, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
 import { P, Clickable, Space, HorizontalLayout } from '../../../components';
+import { actions } from '../../../state';
 
 class SignUp extends Component {
     state = {
@@ -9,6 +10,27 @@ class SignUp extends Component {
         password: '',
         password2: ''
     };
+
+
+    request_signup = async()=>{
+        const {email, password, password2} = this.state;
+        if(password !== password2){
+            return alert("Şifreler eşleşmiyor");
+        }
+
+        actions.auth.RequestSignup({email: email.toLowerCase(), password}, ({data, error})=>{
+            if(data){
+                alert("Kayıt başarılı. Giriş Yapabilirsiniz");
+                this.props.navigation.navigate('Login');
+            }
+            if(error){
+                if(error == "email_exists"){
+                    return alert("Bu email adresi zaten kayıtlı!");
+                }
+                alert("Beklenmeyen bir hata oluştu!");
+            }
+        });
+    }
 
     render() {
         return (
@@ -24,6 +46,7 @@ class SignUp extends Component {
                         placeholder="E-Mail"
                         placeholderTextColor={'#959595'}
                         maxLength={35}
+                        keyboardType={"email-address"}
                     />
 
                     <TextInput
@@ -45,7 +68,7 @@ class SignUp extends Component {
                     />
 
                     <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
-                        <Clickable onClick={() => this.props.navigation.navigate('Home')} animSize={0.95}>
+                        <Clickable onClick={this.request_signup} animSize={0.95}>
                             <View style={[styles.continueButton]}>
                                 <P color={'#2e5469'} size={'d'} bold>Kayıt Ol</P>
                             </View>
@@ -84,7 +107,7 @@ const styles = StyleSheet.create({
         margin: 15,
         borderBottomWidth: 1,
         borderColor: '#C6C6C6',
-        color: '#EFEFEF'
+        color: '#000000'
     },
 
     continueButton: {
