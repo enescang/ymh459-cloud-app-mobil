@@ -5,6 +5,7 @@ const initialState = {
 	login_complate: false,
 
 	selectedLanguage: null,
+	files: [],
 	translater: () => { },
 };
 
@@ -20,6 +21,8 @@ const reducer = (state = initialState, { type, payload }) => {
 			return { ...state, login_complate: true };
 		case "USER_VERIFIED":
 			return { ...state, user: payload.user, access_token: payload.access_token };
+		case "FILE_UPDATED":
+			return { ...state, files: payload.files };
 		case "LANGUAGE":
 			return { ...state, translater: payload.translater, selectedLanguage: payload.language };
 		case "LOGOUT":
