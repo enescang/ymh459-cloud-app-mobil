@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Request } from "../../request";
 
 import localization from '@serdarakkus/hyper/localization';
+import axios from "axios";
 
 const generateActions = (store, getNavigator) => {
     const actions =
@@ -48,6 +49,7 @@ const generateActions = (store, getNavigator) => {
             if (data && is_callable){
                 callback({ data });
                 Request.access_token = data.access_token;
+                axios.defaults.headers.common['Authorization'] = 'Bearer ' + data.access_token;
                 store.dispatch({type: "USER_VERIFIED", payload: {user: data.user, access_token: data.access_token }});
                 store.dispatch({type: "COMPLETE_LOGIN", payload: true });
                 actions.Serialize();
@@ -69,10 +71,31 @@ const generateActions = (store, getNavigator) => {
                 return callback({data:true});
             data = JSON.parse(data);
             Request.access_token = data.profile_token;
+            axios.defaults.headers.common['Authorization'] = 'Bearer ' + data.access_token;
             store.dispatch({type:"AUTH_RESTORE",payload:data});
             return callback({data:true});
         },
+        UpdateOrAddFile:async({name, _id, is_uploaded}, callback)=>{
+            try{
+                const file = {_id, name, is_uploaded};
+                const all_files = [...store.getState().auth.files];
+                const id_map = all_files.map((f)=>f._id);
+                const file_index = id_map.indexOf(_id);
 
+                if(file_index >= 0){
+                  all_files[file_index] = file;
+                }else{
+                    all_files.push(file);
+                }
+
+                console.log({all_files}, ">><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+                store.dispatch({type:"FILE_UPDATED",payload:{files:all_files}});
+                callback({data:true});
+                actions.Serialize();
+            } catch(error){
+                callback({error});
+            }
+        },
     };
     return actions;
 }
