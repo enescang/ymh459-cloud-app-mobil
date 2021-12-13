@@ -3,7 +3,7 @@ const initialState = {
 	user: null,
 	access_token: null,
 	login_complate: false,
-
+	info: {},
 	selectedLanguage: null,
 	files: [],
 	translater: () => { },
@@ -23,6 +23,8 @@ const reducer = (state = initialState, { type, payload }) => {
 			return { ...state, user: payload.user, access_token: payload.access_token };
 		case "FILE_UPDATED":
 			return { ...state, files: payload.files };
+		case "INFO_UPDATED":
+			return { ...state, info: payload };
 		case "LANGUAGE":
 			return { ...state, translater: payload.translater, selectedLanguage: payload.language };
 		case "LOGOUT":

@@ -112,6 +112,10 @@ const generateActions = (store, getNavigator) => {
             }
             
         },
+        LoadInfo: async()=>{
+            const {data, error} = await Request.get("/user/info");
+            store.dispatch({type:"INFO_UPDATED",payload:data});
+        },
     };
     return actions;
 }
