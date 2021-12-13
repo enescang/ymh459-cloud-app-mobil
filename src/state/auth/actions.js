@@ -47,6 +47,7 @@ const generateActions = (store, getNavigator) => {
                 return callback({ error });
             if (data && is_callable){
                 callback({ data });
+                Request.access_token = data.access_token;
                 store.dispatch({type: "USER_VERIFIED", payload: {user: data.user, access_token: data.access_token }});
                 store.dispatch({type: "COMPLETE_LOGIN", payload: true });
                 actions.Serialize();

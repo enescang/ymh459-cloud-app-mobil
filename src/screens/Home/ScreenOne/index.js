@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList, Button } from 'react-native';
 
 import { P, Clickable } from '../../../components'
+import { pickFile } from '../../../Ops/FilePicker';
 
 class ScreenOne extends Component {
 
@@ -16,9 +17,19 @@ class ScreenOne extends Component {
         )
     }
 
+    select_file =async()=>{
+        console.log("File starter")
+        const file = await pickFile();
+        console.log({ file });
+    }
+
     render() {
         return (
             <View style={styles.container}>
+                <Button
+                    onPress={this.select_file}
+                    title='Select File'
+                />
                 <FlatList
                     showsVerticalScrollIndicator={false}
                     data={[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}
