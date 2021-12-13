@@ -75,9 +75,9 @@ const generateActions = (store, getNavigator) => {
             store.dispatch({type:"AUTH_RESTORE",payload:data});
             return callback({data:true});
         },
-        UpdateOrAddFile:async({name, _id, is_uploaded}, callback)=>{
+        UpdateOrAddFile:async({ uri, size, mime, name, _id, is_uploaded}, callback)=>{
             try{
-                const file = {_id, name, is_uploaded};
+                const file = {uri, size, mime, name, _id, is_uploaded};
                 const all_files = [...store.getState().auth.files];
                 const id_map = all_files.map((f)=>f._id);
                 const file_index = id_map.indexOf(_id);
@@ -95,6 +95,22 @@ const generateActions = (store, getNavigator) => {
             } catch(error){
                 callback({error});
             }
+        },
+        RemoveFile: async({_id}, callback)=>{
+            try{
+                const all_files = [...store.getState().auth.files];
+                const id_map = all_files.map((f)=>f._id);
+                const file_index = id_map.indexOf(_id);
+                if(file_index != -1){
+                    all_files.splice(file_index, 1);
+                }
+                store.dispatch({type:"FILE_UPDATED",payload:{files:all_files}});
+                callback({data:true});
+                actions.Serialize();
+            } catch(error){
+                callback({data:false});
+            }
+            
         },
     };
     return actions;
