@@ -42,7 +42,7 @@ class Home extends Component {
                                         }}
                                     /> */}
                                     <Text style={{ top: 5, color: focused ? '#0466c8' : '#212529', fontSize: 16, fontWeight: 'bold'}}>
-                                        Ana Sayfa {this.props.auth.login_complate+""}
+                                        Ana Sayfa
                                     </Text>
                                 </View>
                             )

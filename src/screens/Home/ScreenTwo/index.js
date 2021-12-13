@@ -34,7 +34,7 @@ class ScreenTwo extends Component {
                         round
                     />
                     <P color={'#242424'} size={'xl'} bold>{user.email}</P>
-                    <P color={'#242424'} size={'m'} bold>{moment(user.created_at).format("MM/DD/YYYY")}</P>
+                    <P color={'#242424'} size={'m'} bold>{moment(user.created_at).format("MM/DD/YYYY")} tarihinde katıldı</P>
                 </View>
                 <View style={{ flex: 2 }}>
                     {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}>

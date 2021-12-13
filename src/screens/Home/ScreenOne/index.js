@@ -15,12 +15,15 @@ class ScreenOne extends Component {
         uploadProgess: 0,
         modalVisible: false,
         selectedFile: {},
+        currentFileId: null,
+        accept: null,
     }
 
 
     renderItem(file, index) {
+        const {currentFileId} = this.state;
         return (
-            <Clickable onClick={() => this.setState({modalVisible:true, selectedFile:file})} animSize={0.98}>
+            <Clickable loading={file._id == currentFileId} onClick={() => this.setState({modalVisible:true, selectedFile:file})} animSize={0.98}>
                 <View style={styles.renderItem}>
                     <P color={'#242424'} size={'l'} bold>{index}.{file.name}</P>
                     <P color={'#242424'} size={'s'} bold>{file.is_uploaded ? "Yüklendi" : "Yüklenmedii..."}</P>
@@ -53,7 +56,7 @@ class ScreenOne extends Component {
 
     start_upload = async (file) => {
         try {
-            this.setState({modalVisible:false})
+            this.setState({modalVisible:false, currentFileId: file._id})
             const { uri, size, mime, name, _id } = file;
             const _f = {
                 uri: `${get_dir_for_meme_type(mime)}/${_id}.${get_extension_from_mime(mime)}`,
@@ -85,7 +88,7 @@ class ScreenOne extends Component {
         } catch (error) {
             alert(error + "&&&")
         }
-        this.setState({ uploadProgess: 0 });
+        this.setState({ uploadProgess: 0, currentFileId: null });
     }
 
     remove_file = async(_id)=>{
@@ -93,7 +96,7 @@ class ScreenOne extends Component {
             if(error){
                 alert(error)
             }
-            this.setState({modalVisible:false});
+            this.setState({modalVisible:false, accept:null});
         });
     }
 
@@ -118,16 +121,18 @@ class ScreenOne extends Component {
 
                         <TextInput
                             style={styles.input}
-                            onChangeText={d => this.setState({ code: d })}
-                            value={this.state.code}
+                            onChangeText={d => this.setState({ accept: d })}
+                            value={this.state.accept}
                             placeholder="ONAY YAZIN"
                             placeholderTextColor={'#959595'}
-                            maxLength={6}
+                            maxLength={4}
                         />
 
-                          <Clickable onClick={()=>this.remove_file(selectedFile._id)} animSize={0.95}>
+                          <Clickable onClick={()=>{
+                              this.state.accept == "ONAY" ? this.remove_file(selectedFile._id) : ()=>{}
+                          }} animSize={0.95}>
                                 <View style={[styles.continueButton]}>
-                                    <P color={'#2e5469'} size={'d'} bold>SİL</P>
+                                    <P color={this.state.accept == "ONAY" ? '#2e5469': "gray"} size={'d'} bold>SİL</P>
                                 </View>
                             </Clickable>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
@@ -207,6 +212,14 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 20,
         paddingBottom: 50,
+    },
+
+    input: {
+        width: 295,
+        margin: 15,
+        borderBottomWidth: 1,
+        borderColor: '#C6C6C6',
+        color: '#000000'
     },
 
     // Modal Styles START
