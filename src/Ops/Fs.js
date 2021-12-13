@@ -97,6 +97,38 @@ export const download_file_to_cache = async(uri,auth)=>{
     }))
 }
 
+export const read_file_as_base64 = async(path)=>{
+    return new Promise((async resolve=>{
+        RNFetchBlob.fs.readStream(path, "ascii")
+        .catch((err)=>{
+            console.log("FS",err);
+            resolve(null);
+        })
+        .then((stream) => {
+            console.log(stream)
+            let data = ''
+            stream.open()
+            stream.onData((chunk) => {
+                data += chunk
+            })
+            stream.onEnd(() => {
+                resolve(data);
+            })
+        })
+    }))
+}
+
+export const base64_to_file = async(data, mime)=>{
+    const extension = get_extension_from_mime(mime)
+    const save_path = `${RNFetchBlob.fs.dirs.CacheDir}/${Math.random().toString()}.${extension}`
+    let result = Platform.select({
+        android: "file://",
+        ios: ""
+    });
+    result += await RNFetchBlob.fs.createFile(save_path, data, "base64");
+    return result;
+}
+
 export const get_cache_directory = ()=>{
     return RNFetchBlob.fs.dirs.CacheDir;
 }

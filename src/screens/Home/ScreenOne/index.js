@@ -3,11 +3,12 @@ import { View, StyleSheet, FlatList, TextInput, Button, Modal, TouchableOpacity 
 
 import { P, Clickable, Space } from '../../../components'
 import { pickFile } from '../../../Ops/FilePicker';
-import { copy_file, create_dir, get_dir_for_meme_type, get_extension_from_mime } from '../../../Ops/Fs';
+import { copy_file, create_dir, get_dir_for_meme_type, get_extension_from_mime, read_file_as_base64 } from '../../../Ops/Fs';
 import { actions } from '../../../state';
 import { connect } from 'react-redux';
 import { Request } from '../../../request';
 import axios from 'axios';
+import { RSA } from 'react-native-rsa-native';
 
 class ScreenOne extends Component {
 
@@ -21,9 +22,9 @@ class ScreenOne extends Component {
 
 
     renderItem(file, index) {
-        const {currentFileId} = this.state;
+        const { currentFileId } = this.state;
         return (
-            <Clickable loading={file._id == currentFileId} onClick={() => this.setState({modalVisible:true, selectedFile:file})} animSize={0.98}>
+            <Clickable loading={file._id == currentFileId} onClick={() => this.setState({ modalVisible: true, selectedFile: file })} animSize={0.98}>
                 <View style={styles.renderItem}>
                     <P color={'#242424'} size={'l'} bold>{index}.{file.name}</P>
                     <P color={'#242424'} size={'s'} bold>{file.is_uploaded ? "Yüklendi" : "Yüklenmedii..."}</P>
@@ -42,10 +43,21 @@ class ScreenOne extends Component {
         const full_path = `${target_dir}${_id}.${extension}`;
         await create_dir(target_dir);
         const copy_result = await copy_file(uri, full_path);
+        // try{
+        //     const asiii = await read_file_as_base64(`${uri}`);
+        //     console.log({asciii})
+        //     const keys = await RSA.generateKeys(4096);
+        //     const encrypted = await RSA.encrypt(asiii, keys.public);
+
+        // }catch(er){
+        //     alert(er)
+        // }
+       
+
         if (copy_result) {
-            actions.auth.UpdateOrAddFile({uri, size, mime, name, _id, is_uploaded: false }, async ({ data, error }) => {
+            actions.auth.UpdateOrAddFile({ uri, size, mime, name, _id, is_uploaded: false }, async ({ data, error }) => {
                 if (data) {
-                    setTimeout(async() => {
+                    setTimeout(async () => {
                         await this.start_upload(file);
                     }, 1000);
                 }
@@ -56,7 +68,7 @@ class ScreenOne extends Component {
 
     start_upload = async (file) => {
         try {
-            this.setState({modalVisible:false, currentFileId: file._id})
+            this.setState({ modalVisible: false, currentFileId: file._id })
             const { uri, size, mime, name, _id } = file;
             const _f = {
                 uri: `${get_dir_for_meme_type(mime)}/${_id}.${get_extension_from_mime(mime)}`,
@@ -91,17 +103,17 @@ class ScreenOne extends Component {
         this.setState({ uploadProgess: 0, currentFileId: null });
     }
 
-    remove_file = async(_id)=>{
-        actions.auth.RemoveFile({_id}, ({data, error})=>{
-            if(error){
+    remove_file = async (_id) => {
+        actions.auth.RemoveFile({ _id }, ({ data, error }) => {
+            if (error) {
                 alert(error)
             }
-            this.setState({modalVisible:false, accept:null});
+            this.setState({ modalVisible: false, accept: null });
         });
     }
 
     modal() {
-        const { modalVisible, selectedFile} = this.state;
+        const { modalVisible, selectedFile } = this.state;
         return (
             <Modal
                 statusBarTranslucent
@@ -128,15 +140,15 @@ class ScreenOne extends Component {
                             maxLength={4}
                         />
 
-                          <Clickable onClick={()=>{
-                              this.state.accept == "ONAY" ? this.remove_file(selectedFile._id) : ()=>{}
-                          }} animSize={0.95}>
-                                <View style={[styles.continueButton]}>
-                                    <P color={this.state.accept == "ONAY" ? '#2e5469': "gray"} size={'d'} bold>SİL</P>
-                                </View>
-                            </Clickable>
+                        <Clickable onClick={() => {
+                            this.state.accept == "ONAY" ? this.remove_file(selectedFile._id) : () => { }
+                        }} animSize={0.95}>
+                            <View style={[styles.continueButton]}>
+                                <P color={this.state.accept == "ONAY" ? '#2e5469' : "gray"} size={'d'} bold>SİL</P>
+                            </View>
+                        </Clickable>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                        <Clickable onClick={()=>this.start_upload(selectedFile)} animSize={0.95}>
+                            <Clickable onClick={() => this.start_upload(selectedFile)} animSize={0.95}>
                                 <View style={[styles.continueButton]}>
                                     <P color={'#2e5469'} size={'d'} bold>YENİDEN YÜLE</P>
                                 </View>
@@ -165,6 +177,10 @@ class ScreenOne extends Component {
                     onPress={this.select_file}
                     title='Select File'
                 />
+                {/* <Button
+                    onPress={this.rsa}
+                    title='Select File'
+                /> */}
                 {
                     this.state.uploadProgess > 0 &&
                     <P color={'#242424'} size={'l'} center bold>Yükleniyor: {this.state.uploadProgess}%</P>
