@@ -6,7 +6,7 @@ import { actions } from '../../../state';
 
 class Login extends Component {
     state = {
-        email: 'developerindiee@gmail.com',
+        email: 'test@gmail.com',
         password: '12345',
         code: null,
         modalVisible: false,
