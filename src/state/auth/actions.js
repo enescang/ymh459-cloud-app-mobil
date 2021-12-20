@@ -83,9 +83,9 @@ const generateActions = (store, getNavigator) => {
             store.dispatch({type:"AUTH_RESTORE",payload:data});
             return callback({data:true});
         },
-        UpdateOrAddFile:async({ uri, size, mime, name, _id, is_uploaded, encrypted_aes_key}, callback)=>{
+        UpdateOrAddFile:async({ uri, size, mime, name, _id, is_uploaded, encrypted_aes_key, file_iv}, callback)=>{
             try{
-                const file = {uri, size, mime, name, _id, is_uploaded, encrypted_aes_key};
+                const file = {uri, size, mime, name, _id, is_uploaded, encrypted_aes_key, file_iv};
                 const all_files = [...store.getState().auth.files];
                 const id_map = all_files.map((f)=>f._id);
                 const file_index = id_map.indexOf(_id);

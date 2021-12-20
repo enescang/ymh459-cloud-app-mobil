@@ -6,7 +6,8 @@ const generateKey = async (password, salt, cost, length) => {
 }
 
 const encryptData = async (text, key) => {
-    const iv = await Aes.randomKey(16);
+    const iv = "aaaaaaaaaaaaaaaa"+"aaaaaaaaaaaaaaaa"
+    console.log("IV AES:", {iv})
     const result = await Aes.encrypt(text, key, iv, "aes-256-cbc");
     return {cipher:result, iv:iv};
 }

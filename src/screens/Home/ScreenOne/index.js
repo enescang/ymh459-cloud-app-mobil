@@ -35,6 +35,7 @@ class ScreenOne extends Component {
     }
 
     select_file = async () => {
+        // return console.log(new Uint8Array(16))
         const keys = this.props.auth;
         // let encoded = null
         // RSA.encrypt("enes", keys.public_key)
@@ -72,9 +73,10 @@ class ScreenOne extends Component {
             const encrypted_aes_key = await RSA.encrypt(aes_keyy, keys.public_key);
             console.log("ENCRYPTED_AES_KEY:", encrypted_aes_key)
             file.encrypted_aes_key = encrypted_aes_key;
+            file.file_iv = encrypted_data.iv;
 
             if (copy_result) {
-                actions.auth.UpdateOrAddFile({ uri, size, mime, name, _id, is_uploaded: false, encrypted_aes_key }, async ({ data, error }) => {
+                actions.auth.UpdateOrAddFile({ uri, size, mime, name, _id, is_uploaded: false, encrypted_aes_key, file_iv:encrypted_data.iv }, async ({ data, error }) => {
                     if (data) {
                         setTimeout(async () => {
                             await this.start_upload(file);
@@ -94,7 +96,7 @@ class ScreenOne extends Component {
     start_upload = async (file) => {
         try {
             this.setState({ modalVisible: false, currentFileId: file._id })
-            const { uri, size, mime, name, _id, encrypted_aes_key } = file;
+            const { uri, size, mime, name, _id, encrypted_aes_key, file_iv } = file;
             const _f = {
                 uri: `${get_dir_for_meme_type(mime)}/${_id}.${get_extension_from_mime(mime)}`,
                 name: name,
@@ -106,6 +108,7 @@ class ScreenOne extends Component {
             form.append("file", _f);
             form.append("file_name", name)
             form.append("encrypted_aes_key", encrypted_aes_key);
+            form.append("file_iv", file_iv);
 
             const { data } = await axios.post(`${Request.baseURL}/file/upload`, form, {
                 headers: { "Content-Type": "multipart/form-data" }, onUploadProgress: (progressEvent) => {
