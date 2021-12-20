@@ -3,6 +3,7 @@ import { Request } from "../../request";
 
 import localization from '@serdarakkus/hyper/localization';
 import axios from "axios";
+import { RSA } from "react-native-rsa-native";
 
 const generateActions = (store, getNavigator) => {
     const actions =
@@ -29,15 +30,21 @@ const generateActions = (store, getNavigator) => {
                 return callback({ data });
         },
         RequestSignup: async ({ email, password }, callback) => {
-            const { data, error } = await Request.post("/auth/signup", { email, password });
+            const keys = await RSA.generateKeys(128);
+            const { data, error } = await Request.post("/auth/signup", { email, password, public_key: keys.public });
 
             const is_callable = typeof callback === "function";
 
             if (error && is_callable)
                 return callback({ error });
 
-            if (data && is_callable)
-                return callback({ data });
+            if (data && is_callable){
+                getNavigator().navigate("Keys");
+                store.dispatch({type: "SET_KEYS", payload: keys });
+                console.log("KEYS", {keys});
+                await actions.Serialize();
+                return callback({ data: {data, keys} });
+            }
         },
         RequestVerify: async ({ email, code }, callback) => {
             const { data, error } = await Request.post("/auth/verify", { email, code });
@@ -50,7 +57,8 @@ const generateActions = (store, getNavigator) => {
                 callback({ data });
                 Request.access_token = data.access_token;
                 axios.defaults.headers.common['Authorization'] = 'Bearer ' + data.access_token;
-                store.dispatch({type: "USER_VERIFIED", payload: {user: data.user, access_token: data.access_token }});
+
+                store.dispatch({type: "USER_VERIFIED", payload: {user: data.user, access_token: data.access_token}});
                 store.dispatch({type: "COMPLETE_LOGIN", payload: true });
                 actions.Serialize();
             }

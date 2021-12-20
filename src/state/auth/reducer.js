@@ -6,6 +6,8 @@ const initialState = {
 	info: {},
 	selectedLanguage: null,
 	files: [],
+	public_key: null,
+	private_key: null,
 	translater: () => { },
 };
 
@@ -25,6 +27,8 @@ const reducer = (state = initialState, { type, payload }) => {
 			return { ...state, files: payload.files };
 		case "INFO_UPDATED":
 			return { ...state, info: payload };
+		case "SET_KEYS":
+			return { ...state, public_key: payload.public, private_key: payload.private };
 		case "LANGUAGE":
 			return { ...state, translater: payload.translater, selectedLanguage: payload.language };
 		case "LOGOUT":
