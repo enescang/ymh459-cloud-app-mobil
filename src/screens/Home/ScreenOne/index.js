@@ -3,12 +3,13 @@ import { View, StyleSheet, FlatList, TextInput, Button, Modal, TouchableOpacity 
 
 import { P, Clickable, Space } from '../../../components'
 import { pickFile } from '../../../Ops/FilePicker';
-import { copy_file, create_dir, get_dir_for_meme_type, get_extension_from_mime, read_file_as_base64 } from '../../../Ops/Fs';
+import { copy_file, create_dir, get_dir_for_meme_type, get_extension_from_mime, read_file_as_ascii } from '../../../Ops/Fs';
 import { actions } from '../../../state';
 import { connect } from 'react-redux';
 import { Request } from '../../../request';
 import axios from 'axios';
 import { RSA } from 'react-native-rsa-native';
+import { AES_KEY } from '../../../Ops/Key';
 
 class ScreenOne extends Component {
 
@@ -34,6 +35,14 @@ class ScreenOne extends Component {
     }
 
     select_file = async () => {
+        const keys = this.props.auth;
+        // let encoded = null
+        // RSA.encrypt("enes", keys.public_key)
+        // .then(encodedMessage => {
+        //     console.log("ENCODED:", encodedMessage)
+        // })
+
+
         console.log("File starter")
         const file = await pickFile();
         console.log({ file });
@@ -43,26 +52,34 @@ class ScreenOne extends Component {
         const full_path = `${target_dir}${_id}.${extension}`;
         await create_dir(target_dir);
         const copy_result = await copy_file(uri, full_path);
-        // try{
-        //     const asiii = await read_file_as_base64(`${uri}`);
-        //     console.log({asciii})
-        //     const keys = await RSA.generateKeys(4096);
-        //     const encrypted = await RSA.encrypt(asiii, keys.public);
+        try{
+            const base64_data = await read_file_as_ascii(`${uri}`);
+            // console.log({base64_data})
 
-        // }catch(er){
-        //     alert(er)
-        // }
-       
-
-        if (copy_result) {
-            actions.auth.UpdateOrAddFile({ uri, size, mime, name, _id, is_uploaded: false }, async ({ data, error }) => {
-                if (data) {
-                    setTimeout(async () => {
-                        await this.start_upload(file);
-                    }, 1000);
-                }
-            })
+            const aes_keyy = await AES_KEY.generateKey("password", "salt", 5000, 256);
+            console.log("AES_KEY:", aes_keyy)
+            const encrypted_data = await AES_KEY.encryptData(base64_data, aes_keyy);
+            console.log("ENCRYPTED_DATA:", encrypted_data.cipher.length)
+            const decrypted_data = await AES_KEY.decryptData(encrypted_data, aes_keyy);
+            console.log("DECRYPTED_DATA:", decrypted_data)
+            // const encrypted = await RSA.encrypt(asiii, keys.public_key);
+            // console.log("Encrypted: >>>>>")
+            // console.log(encrypted)
+            // console.log("Encrypted: <<<<<")
+        }catch(er){
+            alert(er)
+            console.log(er)
         }
+
+        // if (copy_result) {
+        //     actions.auth.UpdateOrAddFile({ uri, size, mime, name, _id, is_uploaded: false }, async ({ data, error }) => {
+        //         if (data) {
+        //             setTimeout(async () => {
+        //                 await this.start_upload(file);
+        //             }, 1000);
+        //         }
+        //     })
+        // }
         console.log({ copy_result })
     }
 
