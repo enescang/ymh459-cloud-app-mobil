@@ -6,9 +6,9 @@ import { actions } from '../../../state';
 
 class SignUp extends Component {
     state = {
-        email: '',
-        password: '',
-        password2: ''
+        email: 'test@gmail.com',
+        password: '12345',
+        password2: '12345',
     };
 
 
@@ -20,8 +20,7 @@ class SignUp extends Component {
 
         actions.auth.RequestSignup({email: email.toLowerCase(), password}, ({data, error})=>{
             if(data){
-                alert("Kayıt başarılı. Giriş Yapabilirsiniz");
-                this.props.navigation.navigate('Login');
+                alert("Kayıt başarılı. Lütfen Privaye Key'i kopyalayınız.");
             }
             if(error){
                 if(error == "email_exists"){
