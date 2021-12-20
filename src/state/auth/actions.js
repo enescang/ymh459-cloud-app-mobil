@@ -30,7 +30,7 @@ const generateActions = (store, getNavigator) => {
                 return callback({ data });
         },
         RequestSignup: async ({ email, password }, callback) => {
-            const keys = await RSA.generateKeys(128);
+            const keys = await RSA.generateKeys(256);
             const { data, error } = await Request.post("/auth/signup", { email, password, public_key: keys.public });
 
             const is_callable = typeof callback === "function";
