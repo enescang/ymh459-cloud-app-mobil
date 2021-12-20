@@ -125,7 +125,7 @@ export const base64_to_file = async(data, mime)=>{
         android: "file://",
         ios: ""
     });
-    result += await RNFetchBlob.fs.createFile(save_path, data, "base64");
+    result += await RNFetchBlob.fs.createFile(save_path, data, "utf8");
     return result;
 }
 

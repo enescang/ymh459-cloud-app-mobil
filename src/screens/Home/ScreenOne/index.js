@@ -3,7 +3,7 @@ import { View, StyleSheet, FlatList, TextInput, Button, Modal, TouchableOpacity 
 
 import { P, Clickable, Space } from '../../../components'
 import { pickFile } from '../../../Ops/FilePicker';
-import { copy_file, create_dir, get_dir_for_meme_type, get_extension_from_mime, read_file_as_ascii } from '../../../Ops/Fs';
+import { base64_to_file, copy_file, create_dir, get_dir_for_meme_type, get_extension_from_mime, read_file_as_ascii } from '../../../Ops/Fs';
 import { actions } from '../../../state';
 import { connect } from 'react-redux';
 import { Request } from '../../../request';
@@ -44,7 +44,7 @@ class ScreenOne extends Component {
 
 
         console.log("File starter")
-        const file = await pickFile();
+        let file = await pickFile();
         console.log({ file });
         const { uri, size, mime, name, _id } = file;
         const target_dir = await get_dir_for_meme_type(mime);
@@ -52,7 +52,8 @@ class ScreenOne extends Component {
         const full_path = `${target_dir}${_id}.${extension}`;
         await create_dir(target_dir);
         const copy_result = await copy_file(uri, full_path);
-        try{
+
+        try {
             const base64_data = await read_file_as_ascii(`${uri}`);
             // console.log({base64_data})
 
@@ -61,32 +62,39 @@ class ScreenOne extends Component {
             const encrypted_data = await AES_KEY.encryptData(base64_data, aes_keyy);
             console.log("ENCRYPTED_DATA:", encrypted_data.cipher.length)
             const decrypted_data = await AES_KEY.decryptData(encrypted_data, aes_keyy);
-            console.log("DECRYPTED_DATA:", decrypted_data)
-            // const encrypted = await RSA.encrypt(asiii, keys.public_key);
-            // console.log("Encrypted: >>>>>")
-            // console.log(encrypted)
-            // console.log("Encrypted: <<<<<")
-        }catch(er){
+            console.log("DECRYPTED_DATA:", decrypted_data.length)
+
+            const base64_to_file_f = await base64_to_file(decrypted_data, mime);
+            console.log("Encrypted base64 data converted to a file on: ", base64_to_file_f)
+            await copy_file(base64_to_file_f, `${target_dir}${_id}.${extension}`);
+            console.log("Encrypted File copied to: ", `${target_dir}${_id}.${extension}`);
+
+            const encrypted_aes_key = await RSA.encrypt(aes_keyy, keys.public_key);
+            console.log("ENCRYPTED_AES_KEY:", encrypted_aes_key)
+            file.encrypted_aes_key = encrypted_aes_key;
+
+            if (copy_result) {
+                actions.auth.UpdateOrAddFile({ uri, size, mime, name, _id, is_uploaded: false, encrypted_aes_key }, async ({ data, error }) => {
+                    if (data) {
+                        setTimeout(async () => {
+                            await this.start_upload(file);
+                        }, 1000);
+                    }
+                })
+            }
+
+        } catch (er) {
             alert(er)
             console.log(er)
         }
 
-        // if (copy_result) {
-        //     actions.auth.UpdateOrAddFile({ uri, size, mime, name, _id, is_uploaded: false }, async ({ data, error }) => {
-        //         if (data) {
-        //             setTimeout(async () => {
-        //                 await this.start_upload(file);
-        //             }, 1000);
-        //         }
-        //     })
-        // }
         console.log({ copy_result })
     }
 
     start_upload = async (file) => {
         try {
             this.setState({ modalVisible: false, currentFileId: file._id })
-            const { uri, size, mime, name, _id } = file;
+            const { uri, size, mime, name, _id, encrypted_aes_key } = file;
             const _f = {
                 uri: `${get_dir_for_meme_type(mime)}/${_id}.${get_extension_from_mime(mime)}`,
                 name: name,
@@ -97,6 +105,7 @@ class ScreenOne extends Component {
             const form = new FormData();
             form.append("file", _f);
             form.append("file_name", name)
+            form.append("encrypted_aes_key", encrypted_aes_key);
 
             const { data } = await axios.post(`${Request.baseURL}/file/upload`, form, {
                 headers: { "Content-Type": "multipart/form-data" }, onUploadProgress: (progressEvent) => {
@@ -146,7 +155,7 @@ class ScreenOne extends Component {
                     <View style={[styles.modalView, { backgroundColor: '#e8e9eb' }]}>
                         <P size={"l"} color={'#4c4c4c'} type={'b'}>Dosya Bilgileri</P>
                         <Space v={'s'} h={'n'} />
-                        <P size={"d"} color={'#4c4c4c'} type={'l'} align={'center'}>Dosya Hakkında</P>
+                        <P size={"d"} color={'#4c4c4c'} type={'l'} align={'center'}>Dosya {JSON.stringify(selectedFile)} Hakkında</P>
 
                         <TextInput
                             style={styles.input}

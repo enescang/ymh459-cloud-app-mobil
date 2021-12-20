@@ -30,7 +30,7 @@ const generateActions = (store, getNavigator) => {
                 return callback({ data });
         },
         RequestSignup: async ({ email, password }, callback) => {
-            const keys = await RSA.generateKeys(4096);
+            const keys = await RSA.generateKeys(1024);
             const { data, error } = await Request.post("/auth/signup", { email, password, public_key: keys.public });
 
             const is_callable = typeof callback === "function";
@@ -83,9 +83,9 @@ const generateActions = (store, getNavigator) => {
             store.dispatch({type:"AUTH_RESTORE",payload:data});
             return callback({data:true});
         },
-        UpdateOrAddFile:async({ uri, size, mime, name, _id, is_uploaded}, callback)=>{
+        UpdateOrAddFile:async({ uri, size, mime, name, _id, is_uploaded, encrypted_aes_key}, callback)=>{
             try{
-                const file = {uri, size, mime, name, _id, is_uploaded};
+                const file = {uri, size, mime, name, _id, is_uploaded, encrypted_aes_key};
                 const all_files = [...store.getState().auth.files];
                 const id_map = all_files.map((f)=>f._id);
                 const file_index = id_map.indexOf(_id);
