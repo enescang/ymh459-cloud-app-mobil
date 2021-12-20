@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { navigationRef } from "./navigator";
-import { Home, Login, SignUp, RememberPass } from '../screens';
+import { Home, Login, SignUp, RememberPass, Keys } from '../screens';
 import { connect } from 'react-redux';
 
 const Stack = createNativeStackNavigator();
@@ -32,6 +32,7 @@ class Navigation extends React.Component {
                                 <Stack.Screen name="Login" component={Login} />
                                 <Stack.Screen name="SignUp" component={SignUp} />
                                 <Stack.Screen name="RememberPass" component={RememberPass} />
+                                <Stack.Screen name="Keys" component={Keys} />
                             </Stack.Navigator>
                         </NavigationContainer>
                 }
