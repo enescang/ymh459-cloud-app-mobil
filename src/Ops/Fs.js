@@ -99,7 +99,7 @@ export const download_file_to_cache = async(uri,auth)=>{
 
 export const read_file_as_ascii = async(path)=>{
     return new Promise((async resolve=>{
-        RNFetchBlob.fs.readStream(path, "base64")
+        RNFetchBlob.fs.readStream(path, "ascii")
         .catch((err)=>{
             console.log("FS",err);
             resolve(null);

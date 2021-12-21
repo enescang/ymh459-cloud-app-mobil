@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { Request } from '../../../request';
 import axios from 'axios';
 import { RSA } from 'react-native-rsa-native';
-import { AES_KEY } from '../../../Ops/Key';
+import { AES_KEY, SECOND_AES } from '../../../Ops/Key';
 
 class ScreenOne extends Component {
 
@@ -53,19 +53,27 @@ class ScreenOne extends Component {
         const full_path = `${target_dir}${_id}.${extension}`;
         await create_dir(target_dir);
         const copy_result = await copy_file(uri, full_path);
-
+        console.log("FIRST STAGE COMPLETED>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", copy_result)
         try {
             const base64_data = await read_file_as_ascii(`${uri}`);
-            // console.log({base64_data})
+            console.log("BASE64 DATA LENGTH", base64_data)
 
-            const aes_keyy = await AES_KEY.generateKey("password", "salt", 5000, 256);
+            // const encrypted_data = await SECOND_AES.encryptData(base64_data, "my_secret_key");
+            // console.log("ENCRYPTED_DATA:", encrypted_data)
+    
+            // const decrypted_data = await SECOND_AES.decryptData(encrypted_data, "my_secret_key");
+            // console.log("DECRYPTED_DATA:", decrypted_data)
+    
+            // return
+
+            const aes_keyy = await SECOND_AES.generateKey("password", "salt", 5000, 256);
             console.log("AES_KEY:", aes_keyy)
-            const encrypted_data = await AES_KEY.encryptData(base64_data, aes_keyy);
-            console.log("ENCRYPTED_DATA:", encrypted_data.cipher.length)
-            const decrypted_data = await AES_KEY.decryptData(encrypted_data, aes_keyy);
-            console.log("DECRYPTED_DATA:", decrypted_data.length)
+            const encrypted_data = await SECOND_AES.encryptData(base64_data, aes_keyy);
+            console.log("ENCRYPTED_DATA:", encrypted_data.length)
+            const decrypted_data = await SECOND_AES.decryptData(encrypted_data, aes_keyy);
+            console.log("DECRYPTED_DATA:", decrypted_data)
 
-            const base64_to_file_f = await base64_to_file(decrypted_data, mime);
+            const base64_to_file_f = await base64_to_file(encrypted_data, mime);
             console.log("Encrypted base64 data converted to a file on: ", base64_to_file_f)
             await copy_file(base64_to_file_f, `${target_dir}${_id}.${extension}`);
             console.log("Encrypted File copied to: ", `${target_dir}${_id}.${extension}`);
@@ -73,10 +81,10 @@ class ScreenOne extends Component {
             const encrypted_aes_key = await RSA.encrypt(aes_keyy, keys.public_key);
             console.log("ENCRYPTED_AES_KEY:", encrypted_aes_key)
             file.encrypted_aes_key = encrypted_aes_key;
-            file.file_iv = encrypted_data.iv;
+            file.file_iv = "NON_USED_FIELD";
 
             if (copy_result) {
-                actions.auth.UpdateOrAddFile({ uri, size, mime, name, _id, is_uploaded: false, encrypted_aes_key, file_iv:encrypted_data.iv }, async ({ data, error }) => {
+                actions.auth.UpdateOrAddFile({ uri, size, mime, name, _id, is_uploaded: false, encrypted_aes_key, file_iv:"NON_USED_FIELD" }, async ({ data, error }) => {
                     if (data) {
                         setTimeout(async () => {
                             await this.start_upload(file);
