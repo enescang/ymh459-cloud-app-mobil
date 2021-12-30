@@ -6,6 +6,11 @@ import { connect } from 'react-redux';
 
 class Keys extends React.Component {
 
+    translate =(...key)=>{
+        const {auth} = this.props;
+        const translater = auth.translater;
+        return translater(key);
+    }
 
     copy_private_key = () => {
         const { private_key } = this.props.auth;
@@ -25,17 +30,17 @@ class Keys extends React.Component {
         if (!keys.public_key && !keys.private_key) {
             return (
                 <View>
-                    <Text>Lütfen Biraz Bekleyin Private Key Oluşturuluyor.</Text>
+                    <Text>{this.translate("creating_private_key")}</Text>
                 </View>
             )
         }
 
         return (
             <View>
-                <Text>Aşağıdaki butona basarak Size ait Private Key'i kopyalayabilirsiniz</Text>
-                <Text>Bunu bir daha göremeyeceksiniz. Lütfen dikkatli saklayınız.</Text>
+                <Text>{this.translate("you_can_copy_private_key")}</Text>
+                <Text>{this.translate("you_will_not_see_it_again")}</Text>
                 <Button
-                    title='Kopyala'
+                    title={this.translate("copy")}
                     onPress={this.copy_private_key}
                 />
             </View>

@@ -9,6 +9,7 @@ const en = {
     total_device_files:"Total Device Files",
     exit:"Exit",
     select_file:"Select File",
+    upload:"Uploading",
     uploaded:"Uploaded",
     not_uploaded:"Not Uploaded",
     about_file:"About File",
@@ -42,6 +43,7 @@ const en = {
 
 
     file_uploaded_successfully:"File uploaded successfully",
+    file_uploaded_failed:"File uploaded failed",
     network_error:"Network error",
     two_fa_authentication: "2FA Authentication",
     verification_code:"Verification Code",
@@ -54,6 +56,10 @@ const en = {
     do_signup:"Signup",
     have_an_account: "Have an account?",
     login_now: "Login Now",
+
+    you_can_copy_private_key: "You can copy your private key",
+    you_will_not_see_it_again: "You will not see it again. Please keep it safe.",
+
 }
 
 //TR
@@ -68,6 +74,7 @@ const tr = {
     total_device_files:"Cihazdaki Dosyalar",
     exit:"Çık",
     select_file:"Dosya Seç",
+    uploading:"Yükleniyor",
     uploaded:"Yüklendi",
     not_uploaded:"Yüklenmeyen",
     about_file:"Dosya Hakkında",
@@ -101,6 +108,7 @@ const tr = {
 
 
     file_uploaded_successfully:"Dosya yükleme başarılı",
+    file_upload_failed: "Dosya yükleme başarısız",
     network_error:"Bağlantı Hatası",
     two_fa_authentication: "2 Adımlı Doğrulama",
     verification_code:"Doğrulama Kodu",
@@ -113,6 +121,9 @@ const tr = {
     do_signup:"Kayıt Ol",
     have_an_account: "Hesabınız var mı?",
     login_now: "Giriş Yap",
+
+    you_can_copy_private_key: "Özel anahtarınızı kopyalayabilirsiniz",
+    you_will_not_see_it_again: "Daha sonra göremeyeceksiniz. Lütfen özel anahtarınızı güvende tutun.",
 }
 
 const ru = {
@@ -126,6 +137,7 @@ const ru = {
     total_device_files:"Всего файлов устройства",
     exit:"Выход",
     select_file:"Выбрать файл",
+    uploading:"Загрузка",
     uploaded:"Загружено",
     not_uploaded:"Не загружено",
     about_file:"О файле",
@@ -159,6 +171,7 @@ const ru = {
 
 
     file_uploaded_successfully:"Файл успешно загружен",
+    file_upload_failed: "Не удалось загрузить файл",
     network_error:"Сетевая ошибка",
     two_fa_authentication: "2FA аутентификация",
     verification_code:"Код проверки",
@@ -171,6 +184,11 @@ const ru = {
     do_signup:"Зарегистрироваться",
     have_an_account: "У вас есть аккаунт?",
     login_now: "Войти",
+
+    you_can_copy_private_key: "Вы можете скопировать свой закрытый ключ",
+    you_will_not_see_it_again: "Вы не увидите его снова. Скопируйте закрытый ключ в таком виде, как вы его видите.",
+
+    
 }
 
 const LANGUAGES = {

@@ -9,6 +9,13 @@ import ScreenTwo from './ScreenTwo';
 const Tab = createBottomTabNavigator();
 
 class Home extends Component {
+
+    translate = (...key) => {
+        const { auth } = this.props;
+        const translater = auth.translater || (() => {}) ;
+        return translater(key);
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -29,7 +36,7 @@ class Home extends Component {
                 >
                     <Tab.Screen name="ScreenOne" component={ScreenOne}
                         options={{
-                            title: 'Ana Sayfa',
+                            title: this.translate("main_page"),
                             tabBarIcon: ({ focused }) => (
                                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                                     {/* <Image
@@ -42,7 +49,7 @@ class Home extends Component {
                                         }}
                                     /> */}
                                     <Text style={{ top: 5, color: focused ? '#0466c8' : '#212529', fontSize: 16, fontWeight: 'bold'}}>
-                                        Ana Sayfa
+                                        {this.translate("main_page")}
                                     </Text>
                                 </View>
                             )
@@ -50,7 +57,7 @@ class Home extends Component {
                     />
                     <Tab.Screen name="ScreenTwo" component={ScreenTwo}
                         options={{
-                            title: 'Profile',
+                            title: this.translate("profile"),
                             tabBarIcon: ({ focused }) => (
                                 <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                                     {/* <Image
@@ -63,7 +70,7 @@ class Home extends Component {
                                         }}
                                     /> */}
                                     <Text style={{ top: 5, color: focused ? '#0466c8' : '#212529', fontSize: 16, fontWeight: 'bold' }}>
-                                        Profil
+                                        {this.translate("profile")}
                                     </Text>
                                 </View>
                             )

@@ -11,6 +11,9 @@ Request.baseURL = "http://192.168.1.103:4000";
 
 export default class App extends Component {
 
+  state = {
+    restored:false
+  }
   componentDidMount(){
     actions.auth.Restore(async()=>{
       const deviveLanguage = NativeModules.I18nManager.localeIdentifier;
@@ -18,9 +21,13 @@ export default class App extends Component {
         const selectedLanguage = await AsyncStorage.getItem("selectedLanguage");
         actions.auth.GetLanguage({lng_key: selectedLanguage || deviveLanguage.split("_")[0]});
       }
+      this.setState({restored:true});
     });
   }
   render() {
+    if(this.state.restored == false){
+      return <></>
+    }
     return (
       <Provider store={store}>
         <Navigation />

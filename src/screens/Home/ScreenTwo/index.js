@@ -14,12 +14,22 @@ class ScreenTwo extends Component {
         this.focus_listener = this.props.navigation.addListener('focus', this.load_info);
     }
 
+    translate =(...key)=>{
+        const {auth} = this.props;
+        const translater = auth.translater;
+        return translater(key);
+    }
+
     load_info = async()=>{
         actions.auth.LoadInfo();
     }
 
     logout = async()=>{
         actions.auth.Logout();
+    }
+
+    change_language = (lng)=>{
+        actions.auth.GetLanguage({lng_key:lng});
     }
 
     render() {
@@ -50,12 +60,12 @@ class ScreenTwo extends Component {
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <P color={'#242424'} size={'xl'} bold>A</P>
                         <Space h={'xs'} />
-                        <P color={'#242424'} size={'d'} bold>Toplam Yüklenen Dosya: {info?.totalDoc || 0}</P>
+                        <P color={'#242424'} size={'d'} bold>{this.translate("total_uploaded_files")}: {info?.totalDoc || 0}</P>
                     </View>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <P color={'#242424'} size={'xl'} bold>A</P>
                         <Space h={'xs'} />
-                        <P color={'#242424'} size={'d'} bold>Cihazdaki Toplam Dosya: {files?.length || 0 }</P>
+                        <P color={'#242424'} size={'d'} bold>{this.translate("total_device_files")}: {files?.length || 0 }</P>
                     </View>
 
                     <Space h={'xs'} />
@@ -63,7 +73,30 @@ class ScreenTwo extends Component {
                         <Clickable onClick={this.logout} animSize={0.95}>
                             <View style={{ paddingVertical: 10, alignItems: 'center', backgroundColor:"#98c1d9", width:200 }}>
                                 <P size={"d"} color={'#ffffff'} type={'sb'}>
-                                    Çıkış
+                                    {this.translate("exit")}
+                                </P>
+                            </View>
+                        </Clickable>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent:'center', marginTop:5 }}>
+                        <Clickable onClick={this.change_language.bind(this,"en")} animSize={0.95}>
+                            <View style={{ paddingVertical: 10, alignItems: 'center', backgroundColor:"#98c1d9", width:40, margin:5 }}>
+                                <P size={"d"} color={'#ffffff'} type={'sb'}>
+                                    EN
+                                </P>
+                            </View>
+                        </Clickable>
+                        <Clickable onClick={this.change_language.bind(this,"tr")} animSize={0.95}>
+                            <View style={{ paddingVertical: 10, alignItems: 'center', backgroundColor:"#98c1d9", width:40, margin:5 }}>
+                                <P size={"d"} color={'#ffffff'} type={'sb'}>
+                                    TR
+                                </P>
+                            </View>
+                        </Clickable>
+                        <Clickable onClick={this.change_language.bind(this,"ru")} animSize={0.95}>
+                            <View style={{ paddingVertical: 10, alignItems: 'center', backgroundColor:"#98c1d9", width:40, margin:5 }}>
+                                <P size={"d"} color={'#ffffff'} type={'sb'}>
+                                    RU
                                 </P>
                             </View>
                         </Clickable>

@@ -21,6 +21,11 @@ class ScreenOne extends Component {
         accept: null,
     }
 
+    translate =(...key)=>{
+        const {auth} = this.props;
+        const translater = auth.translater;
+        return translater(key);
+    }
 
     renderItem(file, index) {
         const { currentFileId } = this.state;
@@ -28,7 +33,7 @@ class ScreenOne extends Component {
             <Clickable loading={file._id == currentFileId} onClick={() => this.setState({ modalVisible: true, selectedFile: file })} animSize={0.98}>
                 <View style={styles.renderItem}>
                     <P color={'#242424'} size={'l'} bold>{index}.{file.name}</P>
-                    <P color={'#242424'} size={'s'} bold>{file.is_uploaded ? "Yüklendi" : "Yüklenmedii..."}</P>
+                    <P color={'#242424'} size={'s'} bold>{file.is_uploaded ? this.translate("uploaded") : this.translate("not_uploaded")}</P>
                 </View>
             </Clickable >
         )
@@ -56,8 +61,8 @@ class ScreenOne extends Component {
         console.log("FIRST STAGE COMPLETED>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", copy_result)
         try {
             const base64_data = await read_file_as_ascii(`${uri}`);
-            console.log("BASE64 DATA LENGTH", base64_data)
-
+            console.log("BASE64 DATA LENGTH->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", base64_data)
+            // return
             // const encrypted_data = await SECOND_AES.encryptData(base64_data, "my_secret_key");
             // console.log("ENCRYPTED_DATA:", encrypted_data)
     
@@ -118,6 +123,10 @@ class ScreenOne extends Component {
             form.append("encrypted_aes_key", encrypted_aes_key);
             form.append("file_iv", file_iv);
 
+
+           
+            // return;
+
             const { data } = await axios.post(`${Request.baseURL}/file/upload`, form, {
                 headers: { "Content-Type": "multipart/form-data" }, onUploadProgress: (progressEvent) => {
                     console.log(progressEvent, "PROGRESS EVENT------------------------------------------------------------------------------")
@@ -127,15 +136,15 @@ class ScreenOne extends Component {
             console.log(data, "UPLAODAD RESULT");
             actions.auth.UpdateOrAddFile({ uri, size, mime, name, _id, is_uploaded: true }, (result) => {
                 if (result.data) {
-                    alert("file uploaded successfully");
+                    alert(this.translate("file_uploaded_successfully"));
                 }
                 if (result.error) {
-                    alert("file NOT uploaded");
+                    alert(this.translate("file_upload_failed"));
                 }
 
             })
         } catch (error) {
-            alert(error + "&&&")
+            alert(this.translate("network_error"));
         }
         this.setState({ uploadProgess: 0, currentFileId: null });
     }
@@ -145,7 +154,7 @@ class ScreenOne extends Component {
             if (error) {
                 alert(error)
             }
-            this.setState({ modalVisible: false, accept: null });
+            this.setState({ modalVisible: false, accept: "ONAY" });
         });
     }
 
@@ -166,7 +175,7 @@ class ScreenOne extends Component {
                     <View style={[styles.modalView, { backgroundColor: '#e8e9eb' }]}>
                         <P size={"l"} color={'#4c4c4c'} type={'b'}>Dosya Bilgileri</P>
                         <Space v={'s'} h={'n'} />
-                        <P size={"d"} color={'#4c4c4c'} type={'l'} align={'center'}>Dosya {JSON.stringify(selectedFile)} Hakkında</P>
+                        <P size={"d"} color={'#4c4c4c'} type={'l'} align={'center'}>Dosya Hakkında</P>
 
                         <TextInput
                             style={styles.input}
@@ -187,14 +196,14 @@ class ScreenOne extends Component {
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                             <Clickable onClick={() => this.start_upload(selectedFile)} animSize={0.95}>
                                 <View style={[styles.continueButton]}>
-                                    <P color={'#2e5469'} size={'d'} bold>YENİDEN YÜLE</P>
+                                    <P color={'#2e5469'} size={'d'} bold>{this.translate("upload_again")}</P>
                                 </View>
                             </Clickable>
                             <Space v={'m'} h={'m'} />
                             <Clickable onClick={() => this.setState({ modalVisible: !modalVisible })} animSize={0.95}>
                                 <View style={{ paddingVertical: 10, alignItems: 'center' }}>
                                     <P size={"d"} color={'#4c4c4c'} type={'sb'}>
-                                        Kapat
+                                        {this.translate("close")}
                                     </P>
                                 </View>
                             </Clickable>
@@ -212,7 +221,7 @@ class ScreenOne extends Component {
                 {this.modal()}
                 <Button
                     onPress={this.select_file}
-                    title='Select File'
+                    title={this.translate("select_file")}
                 />
                 {/* <Button
                     onPress={this.rsa}
