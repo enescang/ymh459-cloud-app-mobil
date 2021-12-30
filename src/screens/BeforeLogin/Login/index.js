@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, Modal, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import { connect } from 'react-redux';
 
 import { P, Clickable, Space, HorizontalLayout } from '../../../components';
 import { actions } from '../../../state';
@@ -12,12 +13,18 @@ class Login extends Component {
         modalVisible: false,
     };
 
+    translate =(...key)=>{
+        const {auth} = this.props;
+        const translater = auth.translater;
+        return translater(key);
+    }
+
 
     request_login = async () => {
         const { email, password } = this.state;
         const filter =  /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         if(filter.test(email) == false){
-            return alert("Lütfen geçerli bir email adresi giriniz.")
+            return alert(this.translate("please_enter_valid_email"));
         }
         actions.auth.RequestLogin({ email: email.toLowerCase(), password }, ({ data, error }) => {
             if (data) {
@@ -25,12 +32,12 @@ class Login extends Component {
             }
             if (error) {
                 if (error == "user_not_found") {
-                    return alert("Böyle bir email adresi mevcut değil");
+                    return alert(this.translate("email_not_found"));
                 }
                 if (error == "password_wrong") {
-                    return alert("Şifre yanlış!");
+                    return alert(this.translate("password_wrong"));
                 }
-                alert("Hata oluştu lütfen tekrar deneyiniz.")
+                alert(this.translate("unexpected_error"));
             }
         });
     }
@@ -38,7 +45,7 @@ class Login extends Component {
     request_verify = async () => {
         const { email, code } = this.state;
         if (code.length != 6) {
-            alert("Doğrulama Kodu 6 haneli olmalıdır.");
+            alert(this.translate("otp_code_must_be_6_digits"));
             return;
         }
         actions.auth.RequestVerify({ email, code }, ({ data, error }) => {
@@ -48,16 +55,16 @@ class Login extends Component {
             if (error) {
                 alert(JSON.stringify(error))
                 if (error == "user_not_found") {
-                    return alert("Böyle bir email adresi mevcut değil");
+                    return alert(this.translate("email_not_found"));
                 }
                 if (error == "otp_code_not_found") {
                     return alert("OTP kodu isteği gelmemiş!");
                 }
                 if (error == "otp_code_wrong") {
-                    return alert("OTP kodu yanlış!");
+                    return alert(this.translate("otp_code_wrong"));
                 }
                 if (error == "otp_expired") {
-                    return alert("OTP kodu süresi dolmuş!");
+                    return alert(this.translate("otp_expired"));
                 }
             }
         })
@@ -78,29 +85,29 @@ class Login extends Component {
             >
                 <TouchableOpacity style={styles.centeredView} onPress={() => this.setState({ modalVisible: false })} activeOpacity={1}>
                     <View style={[styles.modalView, { backgroundColor: '#e8e9eb' }]}>
-                        <P size={"l"} color={'#4c4c4c'} type={'b'}>İki adımlı doğrulama</P>
+                        <P size={"l"} color={'#4c4c4c'} type={'b'}>{this.translate("two_fa_authentication")}</P>
                         <Space v={'s'} h={'n'} />
-                        <P size={"d"} color={'#4c4c4c'} type={'l'} align={'center'}>Lütfen mail adresinize gönderilmiş olan 6 haneli kodu giriniz</P>
+                        <P size={"d"} color={'#4c4c4c'} type={'l'} align={'center'}>{this.translate("please_enter_otp_code")}</P>
 
                         <TextInput
                             style={styles.input}
                             onChangeText={d => this.setState({ code: d })}
                             value={this.state.code}
-                            placeholder="Doğrulama Kodu"
+                            placeholder={this.translate("verification_code")}
                             placeholderTextColor={'#959595'}
                             maxLength={6}
                         />
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                             <Clickable onClick={this.request_verify} animSize={0.95}>
                                 <View style={[styles.continueButton]}>
-                                    <P color={'#2e5469'} size={'d'} bold>Doğrula</P>
+                                    <P color={'#2e5469'} size={'d'} bold>{this.translate("verify")}</P>
                                 </View>
                             </Clickable>
                             <Space v={'m'} h={'m'} />
                             <Clickable onClick={() => this.setState({ modalVisible: !modalVisible })} animSize={0.95}>
                                 <View style={{ paddingVertical: 10, alignItems: 'center' }}>
                                     <P size={"d"} color={'#4c4c4c'} type={'sb'}>
-                                        İptal
+                                        {this.translate("cancel")}
                                     </P>
                                 </View>
                             </Clickable>
@@ -118,13 +125,13 @@ class Login extends Component {
                 {this.modal()}
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <View style={{ marginBottom: 50 }}>
-                        <P size={'xxl'} color={'#4c4c4c'} bold>Giriş Ekranı</P>
+                        <P size={'xxl'} color={'#4c4c4c'} bold>{this.translate("login")}</P>
                     </View>
                     <TextInput
                         style={styles.input}
                         onChangeText={d => this.setState({ email: d })}
                         value={this.state.email}
-                        placeholder="E-Mail"
+                        placeholder={this.translate("email")}
                         placeholderTextColor={'#959595'}
                         maxLength={35}
                         keyboardType={"email-address"}
@@ -134,7 +141,7 @@ class Login extends Component {
                         style={styles.input}
                         onChangeText={d => this.setState({ password: d })}
                         value={this.state.password}
-                        placeholder="Şifre"
+                        placeholder={this.translate("password")}
                         placeholderTextColor={'#959595'}
                         maxLength={35}
                     />
@@ -142,19 +149,19 @@ class Login extends Component {
                     <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
                         <Clickable onClick={this.request_login} animSize={0.95}>
                             <View style={[styles.continueButton]}>
-                                <P color={'#2e5469'} size={'d'} bold>Giriş Yap</P>
+                                <P color={'#2e5469'} size={'d'} bold>{this.translate("do_login")}</P>
                             </View>
                         </Clickable>
                         <Space v={'s'} h={'n'} />
                         <Clickable onClick={() => this.props.navigation.navigate('RememberPass')} animSize={0.95}>
-                            <P color={'#3967dd'} size={'mm'}>Şifreni mi unuttun?</P>
+                            <P color={'#3967dd'} size={'mm'}>{this.translate("forget_password")}</P>
                         </Clickable>
                     </View>
                 </View>
                 <View style={{ alignItems: 'center', justifyContent: 'flex-end', bottom: 10, flexDirection: 'row' }}>
-                    <P color={'#777c7f'} size={'mm'} bold>Hesabın yok mu?  </P>
+                    <P color={'#777c7f'} size={'mm'} bold>{this.translate("do_not_have_an_account")}  </P>
                     <Clickable onClick={() => this.props.navigation.navigate('SignUp')} animSize={0.95}>
-                        <P color={'#3967dd'} size={'m'}>Şimdi Kayıt Ol</P>
+                        <P color={'#3967dd'} size={'m'}>{this.translate("register_now")}</P>
                     </Clickable>
                 </View>
             </View>
@@ -228,6 +235,12 @@ const styles = StyleSheet.create({
         height: 1,
     },
     // Modal Styles END
-})
+});
 
+const mapStateToProps = ({auth})=>{
+    return {
+        auth
+    }
+}
+Login = connect(mapStateToProps)(Login);
 export { Login }

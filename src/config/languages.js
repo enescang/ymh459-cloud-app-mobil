@@ -43,6 +43,11 @@ const en = {
 
     file_uploaded_successfully:"File uploaded successfully",
     network_error:"Network error",
+    two_fa_authentication: "2FA Authentication",
+    verification_code:"Verification Code",
+    do_login: "Login",
+    do_not_have_an_account:"Don't have an account?",
+    register_now: "Register Now",
 }
 
 //TR
@@ -91,6 +96,11 @@ const tr = {
 
     file_uploaded_successfully:"Dosya yükleme başarılı",
     network_error:"Bağlantı Hatası",
+    two_fa_authentication: "2 Adımlı Doğrulama",
+    verification_code:"Doğrulama Kodu",
+    do_login: "Giriş Yap",
+    do_not_have_an_account:"Hesabınız yok mu?",
+    register_now: "Şimdi Kayıt Ol",
 }
 
 const ru = {
@@ -138,6 +148,11 @@ const ru = {
 
     file_uploaded_successfully:"Файл успешно загружен",
     network_error:"Сетевая ошибка",
+    two_fa_authentication: "2FA аутентификация",
+    verification_code:"Код проверки",
+    do_login: "Войти",
+    do_not_have_an_account:"У вас нет аккаунта?",
+    register_now: "Зарегистрироваться",
 }
 
 const LANGUAGES = {

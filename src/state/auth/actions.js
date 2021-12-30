@@ -2,22 +2,28 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Request } from "../../request";
 
 import localization from '@serdarakkus/hyper/localization';
+import { LANGUAGES } from "../../config/languages";
 import axios from "axios";
 import { RSA } from "react-native-rsa-native";
 
 const generateActions = (store, getNavigator) => {
     const actions =
     {
-        GetLanguage: async ({ val }) => {
-            // local = new localization();
-
-            // console.log("Fix Langugages!", {val});
-            // local.set('en')(LAN.en);
-            // local.set('tr')(LAN.tr);
-            // const translater = local.translate(val);
-            // store.dispatch({ type: "LANGUAGE", payload: {translater, language: val} });
+        GetLanguage: async ({ lng_key }) => {
+            const available_languages = ["en", "tr", "ru"];
+            const local = new localization();
+            let lng = "en";
+            if(available_languages.indexOf(lng_key) > -1){
+                lng = lng_key;   
+            }
+            console.log("Fix Langugages!", {lng});
+            local.set('en')(LANGUAGES.en);
+            local.set('tr')(LANGUAGES.tr);
+            local.set('ru')(LANGUAGES.ru);
+            const translater = local.translate(lng);
+            store.dispatch({ type: "LANGUAGE", payload: {translater, language: lng} });
             // GlobalEvents.fire("LANGUAGE_CHANGED");
-            // await AsyncStorage.setItem("selectedLanguage", val);
+            await AsyncStorage.setItem("selectedLanguage", lng);
         },
         RequestLogin: async ({ email, password }, callback) => {
             const { data, error } = await Request.post("/auth/login", { email, password });
