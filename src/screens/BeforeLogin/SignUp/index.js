@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, Modal, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { connect } from 'react-redux';
 
 import { P, Clickable, Space, HorizontalLayout } from '../../../components';
 import { actions } from '../../../state';
@@ -11,22 +12,27 @@ class SignUp extends Component {
         password2: '12345',
     };
 
+    translate =(...key)=>{
+        const {auth} = this.props;
+        const translater = auth.translater;
+        return translater(key);
+    }
 
     request_signup = async()=>{
         const {email, password, password2} = this.state;
         if(password !== password2){
-            return alert("Şifreler eşleşmiyor");
+            return alert(this.translate("password_not_match"));
         }
 
         actions.auth.RequestSignup({email: email.toLowerCase(), password}, ({data, error})=>{
             if(data){
-                alert("Kayıt başarılı. Lütfen Privaye Key'i kopyalayınız.");
+                alert(this.translate("signup_success_please_copy_private_key"));
             }
             if(error){
                 if(error == "email_exists"){
-                    return alert("Bu email adresi zaten kayıtlı!");
+                    return alert(this.translate("email_already_exists"));
                 }
-                alert("Beklenmeyen bir hata oluştu!");
+                alert(this.translate("unexpected_error"));
             }
         });
     }
@@ -36,13 +42,13 @@ class SignUp extends Component {
             <View style={styles.container}>
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                     <View style={{ marginBottom: 50 }}>
-                        <P size={'xxl'} color={'#4c4c4c'} bold>Kayıt Ekranı</P>
+                        <P size={'xxl'} color={'#4c4c4c'} bold>{this.translate("do_signup")}</P>
                     </View>
                     <TextInput
                         style={styles.input}
                         onChangeText={d => this.setState({ email: d })}
                         value={this.state.email}
-                        placeholder="E-Mail"
+                        placeholder={this.translate("email")}
                         placeholderTextColor={'#959595'}
                         maxLength={35}
                         keyboardType={"email-address"}
@@ -52,7 +58,7 @@ class SignUp extends Component {
                         style={styles.input}
                         onChangeText={d => this.setState({ password: d })}
                         value={this.state.password}
-                        placeholder="Şifre"
+                        placeholder={this.translate("password")}
                         placeholderTextColor={'#959595'}
                         maxLength={35}
                     />
@@ -61,7 +67,7 @@ class SignUp extends Component {
                         style={styles.input}
                         onChangeText={d => this.setState({ password2: d })}
                         value={this.state.password2}
-                        placeholder="Şifre Doğrulama"
+                        placeholder={this.translate("password_confirm")}
                         placeholderTextColor={'#959595'}
                         maxLength={35}
                     />
@@ -69,15 +75,15 @@ class SignUp extends Component {
                     <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
                         <Clickable onClick={this.request_signup} animSize={0.95}>
                             <View style={[styles.continueButton]}>
-                                <P color={'#2e5469'} size={'d'} bold>Kayıt Ol</P>
+                                <P color={'#2e5469'} size={'d'} bold>{this.translate("do_signup")}</P>
                             </View>
                         </Clickable>
                     </View>
                 </View>
                 <View style={{ alignItems: 'center', justifyContent: 'flex-end', bottom: 10, flexDirection: 'row' }}>
-                    <P color={'#777c7f'} size={'mm'} bold>Hesabınız var mı?  </P>
+                    <P color={'#777c7f'} size={'mm'} bold>{this.translate("have_an_account")}  </P>
                     <Clickable onClick={() => this.props.navigation.navigate('Login')} animSize={0.95}>
-                        <P color={'#3967dd'} size={'m'}>Şimdi Giriş Yap</P>
+                        <P color={'#3967dd'} size={'m'}>{this.translate("login_now")}</P>
                     </Clickable>
                 </View>
             </View>
@@ -119,4 +125,7 @@ const styles = StyleSheet.create({
     },
 })
 
+const mapStateToProps = ({auth}) => ({auth});
+
+SignUp = connect(mapStateToProps)(SignUp);
 export { SignUp }

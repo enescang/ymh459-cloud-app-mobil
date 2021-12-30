@@ -48,6 +48,12 @@ const en = {
     do_login: "Login",
     do_not_have_an_account:"Don't have an account?",
     register_now: "Register Now",
+
+    email_already_exists:"Email already exists",
+    password_confirmation:"Password confirmation",
+    do_signup:"Signup",
+    have_an_account: "Have an account?",
+    login_now: "Login Now",
 }
 
 //TR
@@ -101,6 +107,12 @@ const tr = {
     do_login: "Giriş Yap",
     do_not_have_an_account:"Hesabınız yok mu?",
     register_now: "Şimdi Kayıt Ol",
+
+    email_already_exists:"Email zaten var",
+    password_confirm:"Şifre Onayla",
+    do_signup:"Kayıt Ol",
+    have_an_account: "Hesabınız var mı?",
+    login_now: "Giriş Yap",
 }
 
 const ru = {
@@ -153,6 +165,12 @@ const ru = {
     do_login: "Войти",
     do_not_have_an_account:"У вас нет аккаунта?",
     register_now: "Зарегистрироваться",
+
+    email_already_exists:"Электронная почта уже существует",
+    password_confirm:"Подтвердите пароль",
+    do_signup:"Зарегистрироваться",
+    have_an_account: "У вас есть аккаунт?",
+    login_now: "Войти",
 }
 
 const LANGUAGES = {
