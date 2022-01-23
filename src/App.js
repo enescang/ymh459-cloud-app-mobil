@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {Request} from './request';
 
-Request.baseURL = "http://192.168.1.103:4000";
+Request.baseURL = "https://ymh459-cloud-app-api.herokuapp.com";
 
 export default class App extends Component {
 
